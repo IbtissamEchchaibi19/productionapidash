@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honey Production API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .config-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .config-row label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 80px;
+        }
+
+        .config-row input {
+            flex: 1;
+            min-width: 300px;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .config-row input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .config-row button {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .config-row button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .section {
+            background: white;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .section-content {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload label {
+            display: block;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload label:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .file-upload.has-files label {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+        }
+
+        .btn-info:hover {
+            box-shadow: 0 8px 20px rgba(23, 162, 184, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .response-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .response-container h4 {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .response-content {
+            background: #212529;
+            color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff40;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success {
+            background: #28a745;
+        }
+
+        .status-error {
+            background: #dc3545;
+        }
+
+        .status-warning {
+            background: #ffc107;
+        }
+
+        .dashboard-link {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .dashboard-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .config-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .config-row input {
+                min-width: auto;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍯 Honey Production API Tester</h1>
+            <p>Test and interact with your Honey Production Processing API</p>
+        </div>
+
+        <div class="config-section">
+            <div class="config-row">
+                <label for="apiUrl">API URL:</label>
+                <input type="text" id="apiUrl" value="https://productionapidash.onrender.com" placeholder="Enter API base URL">
+                <button onclick="testConnection()">Test Connection</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Dashboard Access -->
+            <div class="section">
+                <div class="section-header">
+                    📊 Dashboard Access
+                </div>
+                <div class="section-content">
+                    <p>Access the production dashboard to view data visualizations and analytics.</p>
+                    <a href="https://productionapidash.onrender.com/dash_app/" target="_blank" class="dashboard-link">
+                        Open Dashboard →
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid">
+                <!-- Health Check -->
+                <div class="section">
+                    <div class="section-header">
+                        ❤️ Health Check
+                    </div>
+                    <div class="section-content">
+                        <button class="btn btn-success" onclick="checkHealth()">
+                            Check API Health
+                        </button>
+                        <div id="healthResponse" class="response-container" style="display: none;">
+                            <h4>Health Status Response:</h4>
+                            <div id="healthContent" class="response-content"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Reports -->
+                <div class="section">
+                    <div class="section-header">
+                        📄 Upload PDF Reports
+                    </div>
+                    <div class="section-content">
+                        <div class="form-group">
+                            <label>Select PDF Files:</label>
+                            <div class="file-upload">
+                                <input type="file" id="pdfFiles" multiple accept=".pdf">
+                                <label for="pdfFiles">
+                                    Click to select PDF files or drag and drop
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="uploadReports()" id="uploadBtn">
+                            Upload Reports
+                        </button>
+                        <div id="uploadResponse" class="response-container" style="display: none;">
+                            <h4>Upload Response:</h4>
+                            <div id="uploadContent" class="response-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid">
+                <!-- List Reports -->
+                <div class="section">
+                    <div class="section-header">
+                        📋 List Reports
+                    </div>
+                    <div class="section-content">
+                        <button class="btn btn-info" onclick="listReports()">
+                            Get All Reports
+                        </button>
+                        <div id="reportsResponse" class="response-container" style="display: none;">
+                            <h4>Reports List:</h4>
+                            <div id="reportsContent" class="response-content"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Data -->
+                <div class="section">
+                    <div class="section-header">
+                        📊 Get Production Data
+                    </div>
+                    <div class="section-content">
+                        <button class="btn btn-info" onclick="getData()">
+                            Get All Data
+                        </button>
+                        <div id="dataResponse" class="response-container" style="display: none;">
+                            <h4>Production Data:</h4>
+                            <div id="dataContent" class="response-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Reports -->
+            <div class="section">
+                <div class="section-header">
+                    🗑️ Delete Reports
+                </div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label for="reportIds">Report IDs (Batch Numbers):</label>
+                        <textarea id="reportIds" rows="3" placeholder="Enter report IDs separated by commas (e.g., BATCH001, BATCH002, BATCH003)"></textarea>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteReports()">
+                        Delete Reports
+                    </button>
+                    <div id="deleteResponse" class="response-container" style="display: none;">
+                        <h4>Delete Response:</h4>
+                        <div id="deleteContent" class="response-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Root -->
+            <div class="section">
+                <div class="section-header">
+                    🏠 API Information
+                </div>
+                <div class="section-content">
+                    <button class="btn btn-info" onclick="getApiInfo()">
+                        Get API Info
+                    </button>
+                    <div id="apiInfoResponse" class="response-container" style="display: none;">
+                        <h4>API Information:</h4>
+                        <div id="apiInfoContent" class="response-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let apiBaseUrl = 'https://productionapidash.onrender.com';
+
+        // Update API URL when changed
+        document.getElementById('apiUrl').addEventListener('change', function() {
+            apiBaseUrl = this.value.trim();
+            if (!apiBaseUrl.startsWith('http')) {
+                apiBaseUrl = 'http://' + apiBaseUrl;
+            }
+            // Remove trailing slash
+            apiBaseUrl = apiBaseUrl.replace(/\/$/, '');
+        });
+
+        // File upload visual feedback
+        document.getElementById('pdfFiles').addEventListener('change', function() {
+            const fileUpload = this.closest('.file-upload');
+            const label = fileUpload.querySelector('label');
+            
+            if (this.files.length > 0) {
+                fileUpload.classList.add('has-files');
+                label.textContent = `${this.files.length} file(s) selected`;
+            } else {
+                fileUpload.classList.remove('has-files');
+                label.textContent = 'Click to select PDF files or drag and drop';
+            }
+        });
+
+        // Utility functions
+        function showResponse(containerId, contentId, data, isError = false) {
+            const container = document.getElementById(containerId);
+            const content = document.getElementById(contentId);
+            
+            container.style.display = 'block';
+            content.textContent = JSON.stringify(data, null, 2);
+            
+            if (isError) {
+                container.style.borderLeftColor = '#dc3545';
+            } else {
+                container.style.borderLeftColor = '#28a745';
+            }
+        }
+
+        function setButtonLoading(buttonId, loading = true) {
+            const button = document.getElementById(buttonId);
+            if (!button) return;
+            
+            if (loading) {
+                button.disabled = true;
+                const originalText = button.textContent;
+                button.setAttribute('data-original-text', originalText);
+                button.innerHTML = '<span class="loading"></span> Loading...';
+            } else {
+                button.disabled = false;
+                const originalText = button.getAttribute('data-original-text');
+                if (originalText) {
+                    button.textContent = originalText;
+                }
+            }
+        }
+
+        async function makeRequest(endpoint, options = {}) {
+            try {
+                const url = `${apiBaseUrl}${endpoint}`;
+                console.log(`Making request to: ${url}`);
+                
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        ...options.headers,
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${data.detail || 'Unknown error'}`);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('Request failed:', error);
+                throw error;
+            }
+        }
+
+        // API Functions
+        async function testConnection() {
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            try {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading"></span> Testing...';
+                
+                const data = await makeRequest('/');
+                
+                button.innerHTML = '<span class="status-indicator status-success"></span>Connected';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }, 2000);
+                
+            } catch (error) {
+                button.innerHTML = '<span class="status-indicator status-error"></span>Failed';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }, 2000);
+                
+                alert(`Connection failed: ${error.message}`);
+            }
+        }
+
+        async function checkHealth() {
+            try {
+                const data = await makeRequest('/health/');
+                showResponse('healthResponse', 'healthContent', data);
+            } catch (error) {
+                showResponse('healthResponse', 'healthContent', { error: error.message }, true);
+            }
+        }
+
+        async function uploadReports() {
+            const fileInput = document.getElementById('pdfFiles');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                alert('Please select at least one PDF file');
+                return;
+            }
+            
+            try {
+                setButtonLoading('uploadBtn', true);
+                
+                const formData = new FormData();
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('files', files[i]);
+                }
+                
+                const data = await makeRequest('/upload-reports/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                showResponse('uploadResponse', 'uploadContent', data);
+                
+                // Clear file selection after successful upload
+                fileInput.value = '';
+                const fileUpload = fileInput.closest('.file-upload');
+                fileUpload.classList.remove('has-files');
+                fileUpload.querySelector('label').textContent = 'Click to select PDF files or drag and drop';
+                
+            } catch (error) {
+                showResponse('uploadResponse', 'uploadContent', { error: error.message }, true);
+            } finally {
+                setButtonLoading('uploadBtn', false);
+            }
+        }
+
+        async function listReports() {
+            try {
+                const data = await makeRequest('/reports/');
+                showResponse('reportsResponse', 'reportsContent', data);
+            } catch (error) {
+                showResponse('reportsResponse', 'reportsContent', { error: error.message }, true);
+            }
+        }
+
+        async function getData() {
+            try {
+                const data = await makeRequest('/data/');
+                showResponse('dataResponse', 'dataContent', data);
+            } catch (error) {
+                showResponse('dataResponse', 'dataContent', { error: error.message }, true);
+            }
+        }
+
+        async function deleteReports() {
+            const reportIdsText = document.getElementById('reportIds').value.trim();
+            
+            if (!reportIdsText) {
+                alert('Please enter at least one report ID');
+                return;
+            }
+            
+            // Parse comma-separated IDs and clean them
+            const reportIds = reportIdsText.split(',').map(id => id.trim()).filter(id => id);
+            
+            if (reportIds.length === 0) {
+                alert('Please enter valid report IDs');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete ${reportIds.length} report(s)?\n\nReport IDs: ${reportIds.join(', ')}`)) {
+                return;
+            }
+            
+            try {
+                const data = await makeRequest('/delete-reports/', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        report_ids: reportIds
+                    })
+                });
+                
+                showResponse('deleteResponse', 'deleteContent', data);
+                
+                // Clear the input after successful deletion
+                document.getElementById('reportIds').value = '';
+                
+            } catch (error) {
+                showResponse('deleteResponse', 'deleteContent', { error: error.message }, true);
+            }
+        }
+
+        async function getApiInfo() {
+            try {
+                const data = await makeRequest('/');
+                showResponse('apiInfoResponse', 'apiInfoContent', data);
+            } catch (error) {
+                showResponse('apiInfoResponse', 'apiInfoContent', { error: error.message }, true);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Honey Production API Tester loaded');
+            
+            // Auto-test connection on load
+            setTimeout(() => {
+                testConnection();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
